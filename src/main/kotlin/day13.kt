@@ -13,17 +13,20 @@ fun main() {
             hash[s.toInt()] = index;
         }
     }
-    
+
     val sortedEntries = hash.entries.sortedByDescending { it.key }
 
-    loop@ for (i in 1..Long.MAX_VALUE){
-        if (i%100000000 == 0L) println("Checking $i")
+    var i = 1L
+
+    loop@ while (i < Long.MAX_VALUE){
 
         for ((lineNr, offset) in sortedEntries){
             if ((i + offset) % lineNr != 0L) {
+                i++
                 continue@loop
             }
         }
+
         println("I is at $i")
         exitProcess(100)
     }
