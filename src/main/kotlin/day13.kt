@@ -14,16 +14,16 @@ fun main() {
         }
     }
 
-    loop@ for (i in 100000000000000..Long.MAX_VALUE){
-        if (i%100000000 == 0L) println("Checking $i")
-        if (i % buslines[0].toLong() != 0L) continue
+    val largestBusNr = hash.keys.maxOrNull() ?: 0
+    val largestBusIdx = hash[largestBusNr] ?: 0
 
-        for (offset in buslines.indices) {
-            val lineNr = buslines[offset]
-            if (lineNr != "x"){
-                if ((i + offset) % lineNr.toInt() != 0L) {
-                    continue@loop
-                }
+    loop@ for (i in 1..Long.MAX_VALUE){
+        if (i%100000000 == 0L) println("Checking $i")
+        if ( (i + hash[largestBusNr]!!) % buslines[largestBusIdx].toLong() != 0L) continue
+
+        for ((lineNr, offset) in hash.entries.sortedByDescending { it.key }){
+            if ((i + offset) % lineNr != 0L) {
+                continue@loop
             }
         }
         println("I is at $i")
