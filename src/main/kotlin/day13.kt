@@ -13,15 +13,13 @@ fun main() {
             hash[s.toInt()] = index;
         }
     }
-
-    val largestBusNr = hash.keys.maxOrNull() ?: 0
-    val largestBusIdx = hash[largestBusNr] ?: 0
+    
+    val sortedEntries = hash.entries.sortedByDescending { it.key }
 
     loop@ for (i in 1..Long.MAX_VALUE){
         if (i%100000000 == 0L) println("Checking $i")
-        if ( (i + hash[largestBusNr]!!) % buslines[largestBusIdx].toLong() != 0L) continue
 
-        for ((lineNr, offset) in hash.entries.sortedByDescending { it.key }){
+        for ((lineNr, offset) in sortedEntries){
             if ((i + offset) % lineNr != 0L) {
                 continue@loop
             }
