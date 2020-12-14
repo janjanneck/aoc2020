@@ -1,4 +1,5 @@
-import kotlin.math.floor
+import java.util.*
+import kotlin.collections.HashSet
 import kotlin.system.exitProcess
 
 fun main() {
@@ -6,31 +7,81 @@ fun main() {
 
     val buslines = input[1].split(',')
 
-    val hash:MutableMap<Int, Int> = HashMap()
+    val hash = TreeMap<Int, Int>()
 
     buslines.forEachIndexed { index, s ->
-        if (s!="x") {
+        if (s != "x") {
             hash[s.toInt()] = index;
         }
     }
 
-    val sortedEntries = hash.entries.sortedByDescending { it.key }
+    val keys = hash.keys.toList().map { it.toLong() }
+
+    val g = lcm(keys)
+
+    val sortedEntries = hash.entries
 
     var i = 1L
 
-    loop@ while (i < Long.MAX_VALUE){
+    val foundSequences = HashSet<Int>()
 
-        for ((lineNr, offset) in sortedEntries){
-            if ((i + offset) % lineNr != 0L) {
-                i++
+    var jumpAheadNr = 1L
+
+    whi@ while (i < Long.MAX_VALUE) {
+        loop@ for ((lineNr, offset) in sortedEntries) {
+            if (matchesPredicate(i, offset, lineNr)) {
+                // check following busses
+                    foundSequences.add(lineNr)
+                    jumpAheadNr = lcm(foundSequences.toList().map { it.toLong() })
                 continue@loop
+            } else {
+                // increment by jumpAheadNr
+                i += jumpAheadNr
+                continue@whi
             }
-        }
 
+        }
         println("I is at $i")
         exitProcess(100)
     }
 
+
+}
+
+fun matchesPredicate(i: Long, offset: Int, lineNr: Int): Boolean {
+    return (i + offset) % lineNr == 0L
+}
+
+fun lcm(a: Long, b: Long): Long {
+    return a * (b / gcd(a, b))
+}
+
+fun lcm(inp: List<Long>): Long {
+    var result = inp[0]
+    for (i in 1 until inp.size) {
+        result = lcm(result, inp[i])
+    }
+    return result
+}
+
+fun gcd(a: Long, b: Long): Long {
+    var a_val = a
+    var b_val = b
+    while (b_val > 0) {
+        val temp = b_val
+        b_val = a_val % b_val
+        a_val = temp
+    }
+    return a_val
+}
+
+fun gcd(inp: List<Long>): Long {
+    var result = inp[0]
+
+    for (i in 1 until inp.size) {
+        result = gcd(result, inp[i])
+    }
+    return result
 
 }
 
@@ -42,7 +93,7 @@ private fun printInfo(input: MutableList<String>) {
     buslines.forEach { print("  $it ") }
     println()
 
-    for (i in 0..100000000000000) {
+    for (i in 0..100000L) {
         print("  $i  ")
         for (line in buslines) {
             if (i % line == 0L) print("  D  ") else print("  .  ")
