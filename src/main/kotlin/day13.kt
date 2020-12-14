@@ -15,24 +15,20 @@ fun main() {
         }
     }
 
-    val keys = hash.keys.toList().map { it.toLong() }
-
-    val g = lcm(keys)
-
     val sortedEntries = hash.entries
-
-    var i = 1L
 
     val foundSequences = HashSet<Int>()
 
     var jumpAheadNr = 1L
+    var i = 1L
 
     whi@ while (i < Long.MAX_VALUE) {
         loop@ for ((lineNr, offset) in sortedEntries) {
-            if (matchesPredicate(i, offset, lineNr)) {
+            if ((i + offset) % lineNr == 0L) {
+                foundSequences.add(lineNr)
+                jumpAheadNr = lcm(foundSequences.toList().map { it.toLong() })
+                println("$foundSequences -> $jumpAheadNr")
                 // check following busses
-                    foundSequences.add(lineNr)
-                    jumpAheadNr = lcm(foundSequences.toList().map { it.toLong() })
                 continue@loop
             } else {
                 // increment by jumpAheadNr
@@ -44,12 +40,6 @@ fun main() {
         println("I is at $i")
         exitProcess(100)
     }
-
-
-}
-
-fun matchesPredicate(i: Long, offset: Int, lineNr: Int): Boolean {
-    return (i + offset) % lineNr == 0L
 }
 
 fun lcm(a: Long, b: Long): Long {
