@@ -8,14 +8,23 @@ fun main() {
     val spokenNumbers = mutableListOf<Int>()
     spokenNumbers.addAll(starters)
 
-    while (i <= 2020) {
-        val spokenBefore = spokenNumbers.indexOf(spokenNumbers.last()) != spokenNumbers.size - 1
-        val temp = spokenNumbers.subList(0, spokenNumbers.size - 1)
-        val nextNum = if (spokenBefore) spokenNumbers.size - 1 - temp.lastIndexOf(spokenNumbers.last()) else 0
+    var spokenNumbersSize = spokenNumbers.size
+
+    var lastSpoken = spokenNumbers.last()
+
+    while (i <= 30000000) {
+        if (i % 10000 == 0) println("I is at $i")
+        val spokenBefore = spokenNumbers.indexOf(lastSpoken) != spokenNumbersSize - 1
+        val nextNum = if (spokenBefore) {
+            (spokenNumbersSize - 1) - spokenNumbers.subList(0, spokenNumbersSize - 1)
+                .lastIndexOf(lastSpoken)
+        } else 0
+        lastSpoken = nextNum
         spokenNumbers.add(nextNum)
+        spokenNumbersSize++
         i++;
     }
 
-    println("2020th number spoken: ${spokenNumbers.last()}")
+    println("30000000th number spoken: ${spokenNumbers.last()}")
 
 }
