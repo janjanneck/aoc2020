@@ -3,28 +3,25 @@ fun main() {
 
     val starters = input[0].split(',').map { it.toInt() }
 
-    var i = starters.size + 1
+    val lastSpokenTurns = mutableMapOf<Int, Int>()
 
-    val spokenNumbers = mutableListOf<Int>()
-    spokenNumbers.addAll(starters)
+    starters.forEachIndexed { turn, number ->
+        lastSpokenTurns[number] = turn + 1
+    }
+    lastSpokenTurns.remove(starters.last())
 
-    var spokenNumbersSize = spokenNumbers.size
+    var currentTurn = starters.size + 1
+    var lastSpokenNum = starters.last()
+    while (currentTurn <= 30000000) {
+        val previousTurnOfLastSpoken = lastSpokenTurns[lastSpokenNum]
+        val saidBefore = previousTurnOfLastSpoken != null
 
-    var lastSpoken = spokenNumbers.last()
-
-    while (i <= 30000000) {
-        if (i % 10000 == 0) println("I is at $i")
-        val spokenBefore = spokenNumbers.indexOf(lastSpoken) != spokenNumbersSize - 1
-        val nextNum = if (spokenBefore) {
-            (spokenNumbersSize - 1) - spokenNumbers.subList(0, spokenNumbersSize - 1)
-                .lastIndexOf(lastSpoken)
-        } else 0
-        lastSpoken = nextNum
-        spokenNumbers.add(nextNum)
-        spokenNumbersSize++
-        i++;
+        // Update lastSpokenTurn of lastSpokenNum to to previous turn
+        lastSpokenTurns[lastSpokenNum] = currentTurn - 1
+        lastSpokenNum = if (saidBefore) currentTurn - 1 - previousTurnOfLastSpoken!! else 0
+        currentTurn++
     }
 
-    println("30000000th number spoken: ${spokenNumbers.last()}")
+    println("30000000th number spoken: $lastSpokenNum")
 
 }
