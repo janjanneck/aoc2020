@@ -10,16 +10,12 @@ fun main() {
     }
     lastSpokenTurns.remove(starters.last())
 
-    var currentTurn = starters.size + 1
     var lastSpokenNum = starters.last()
-    while (currentTurn <= 30000000) {
-        val previousTurnOfLastSpoken = lastSpokenTurns[lastSpokenNum]
-        val saidBefore = previousTurnOfLastSpoken != null
 
-        // Update lastSpokenTurn of lastSpokenNum to to previous turn
-        lastSpokenTurns[lastSpokenNum] = currentTurn - 1
-        lastSpokenNum = if (saidBefore) currentTurn - 1 - previousTurnOfLastSpoken!! else 0
-        currentTurn++
+    for (turn in (starters.size + 1)..30000000) {
+        val previousTurnOfLastSpoken = lastSpokenTurns[lastSpokenNum]
+        lastSpokenTurns[lastSpokenNum] = turn - 1 // last turn
+        lastSpokenNum = if (previousTurnOfLastSpoken != null) turn - 1 - previousTurnOfLastSpoken else 0
     }
 
     println("30000000th number spoken: $lastSpokenNum")
