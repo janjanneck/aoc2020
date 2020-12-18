@@ -6,7 +6,7 @@ fun main() {
     for (i in 0 until input.size) {
         val line = input[i]
         for (j in line.indices) {
-            conwayCubes[Coordinate(j, i, 0)] = line[j]
+            conwayCubes[Coordinate(j, i, 0, 0)] = line[j]
         }
     }
 
@@ -50,15 +50,18 @@ fun main() {
 }
 
 private fun printInfo(conwayCubes: MutableMap<Coordinate, Char>) {
-    for (z in conwayCubes.keys.map { it.z }.min()!!..conwayCubes.keys.map { it.z }.max()!!) {
-        println("Z = $z")
-        for (y in conwayCubes.keys.map { it.y }.min()!!..conwayCubes.keys.map { it.y }.max()!!) {
-            for (x in conwayCubes.keys.map { it.x }.min()!!..conwayCubes.keys.map { it.x }.max()!!) {
-                print(conwayCubes[Coordinate(x, y, z)])
+    for (w in conwayCubes.keys.map { it.w }.min()!!..conwayCubes.keys.map { it.w }.max()!!) {
+        println("W = $w")
+        for (z in conwayCubes.keys.map { it.z }.min()!!..conwayCubes.keys.map { it.z }.max()!!) {
+            println("Z = $z")
+            for (y in conwayCubes.keys.map { it.y }.min()!!..conwayCubes.keys.map { it.y }.max()!!) {
+                for (x in conwayCubes.keys.map { it.x }.min()!!..conwayCubes.keys.map { it.x }.max()!!) {
+                    print(conwayCubes[Coordinate(x, y, z, w)])
+                }
+                println()
             }
             println()
         }
-        println()
     }
     println("========")
 }
@@ -70,11 +73,15 @@ fun updateCoordinatesToCheck(currentLayout: MutableMap<Coordinate, Char>) {
     val yMin = currentLayout.keys.map { it.y }.minOrNull()!!
     val zMax = currentLayout.keys.map { it.z }.maxOrNull()!!
     val zMin = currentLayout.keys.map { it.z }.minOrNull()!!
+    val wMax = currentLayout.keys.map { it.w }.maxOrNull()!!
+    val wMin = currentLayout.keys.map { it.w }.minOrNull()!!
 
-    for (i in xMin - 1 .. xMax + 1) {
-        for (j in yMin - 1 .. yMax + 1) {
-            for (k in zMin - 1 .. zMax + 1) {
-                currentLayout.computeIfAbsent(Coordinate(i, j, k)) { '.' }
+    for (i in xMin - 1..xMax + 1) {
+        for (j in yMin - 1..yMax + 1) {
+            for (k in zMin - 1..zMax + 1) {
+                for (w in wMin - 1..wMax + 1) {
+                    currentLayout.computeIfAbsent(Coordinate(i, j, k, w)) { '.' }
+                }
             }
         }
     }
@@ -82,10 +89,12 @@ fun updateCoordinatesToCheck(currentLayout: MutableMap<Coordinate, Char>) {
 
 fun getNeighbours(pos: Coordinate): MutableList<Coordinate> {
     val neighbours = mutableListOf<Coordinate>()
-    for (i in pos.x - 1 .. pos.x + 1) {
-        for (j in pos.y - 1 .. pos.y + 1) {
-            for (k in pos.z - 1 .. pos.z + 1) {
-                neighbours.add(Coordinate(i, j, k))
+    for (i in pos.x - 1..pos.x + 1) {
+        for (j in pos.y - 1..pos.y + 1) {
+            for (k in pos.z - 1..pos.z + 1) {
+                for (w in pos.w - 1..pos.w + 1) {
+                    neighbours.add(Coordinate(i, j, k, w))
+                }
             }
         }
     }
@@ -93,4 +102,4 @@ fun getNeighbours(pos: Coordinate): MutableList<Coordinate> {
     return neighbours
 }
 
-data class Coordinate(val x:Int, val y:Int, val z:Int)
+data class Coordinate(val x: Int, val y: Int, val z: Int, val w: Int)
